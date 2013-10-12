@@ -77,7 +77,7 @@ loop do
 
 		puts "--------------------------------------------------------------------------------"
 		puts ""
-		puts "  Plays from      : #{currentSong["slot_id"]}"
+		puts "  Plays from     : #{currentSong["slot_id"]}"
 		puts "  Ends at        : #{Time.at(endTime)}"
 		puts "  Artist Name    : #{currentSong["artistName"]}"
 		puts "  Track Name     : #{currentSong["trackName"]}"

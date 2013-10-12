@@ -1,0 +1,1 @@
+{"slot_id"=>2012-06-13 18:26:16 -0700, "length"=>"218,", "artistName"=>"KELLY CLARKSON", "artistSlug"=>"kelly-clarkson", "trackSlug"=>"stronger", "trackName"=>"STRONGER", "albumSlug"=>"_", "albumName"=>"", "altitem"=>" 0"}

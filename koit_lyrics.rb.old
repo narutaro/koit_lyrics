@@ -1,30 +1,10 @@
 #!/usr/bin/ruby
 
-require 'optparse'
+require 'rubygems'
 require 'open-uri'
+require 'mysql2'
 
-# MySQL Params
-db_host = "localhost"
-db_name = "radio_development"
-db_user = "root"
-db_pass = ""
-
-OptionParser.new do |o|
-    Version = "0.90"
-    o.on('-d','--db','store the lyrics in the database') { |b| $db = b }
-    begin
-        o.parse!
-    rescue
-        puts "Invalid option. \n #{o}"
-        exit
-    end 
-end
-
-if $db == true
-	require 'mysql2'
-	client = Mysql2::Client.new(:host => db_host, :username => db_user, :password => db_pass, :database => db_name)
-end
-
+client = Mysql2::Client.new(:host => 'localhost', :username => 'root', :password => '', :database => 'radio_development')
 url = "http://koit.tunegenie.com/onair/"
 
 n = 0 # number of main loops
@@ -77,12 +57,11 @@ loop do
 
 		puts "--------------------------------------------------------------------------------"
 		puts ""
-		puts "  Plays from      : #{currentSong["slot_id"]}"
+		puts "  Play from      : #{currentSong["slot_id"]}"
 		puts "  Ends at        : #{Time.at(endTime)}"
 		puts "  Artist Name    : #{currentSong["artistName"]}"
 		puts "  Track Name     : #{currentSong["trackName"]}"
 		puts "  Alubum Name    : #{currentSong["albumName"]}"
-		puts ""
 
 		lyrics_url = "http://koit.tunegenie.com/music/#{currentSong["artistSlug"]}/_/#{currentSong["trackSlug"]}/+lyrics/"
 
@@ -91,25 +70,28 @@ loop do
 			lyricArray = $1.gsub(/\n|\r/,'').split(/<br>|<p>/)
 
 			lyricArray.each{|line|
-				puts "   * #{line}"
+				puts line
 			}
 
 			lyricText = lyricArray.join("@")
+			p lyricArray
+			p lyricText
 
 		else
-			puts "Could not find out the lyric in the page"
+			puts "no much"
 		end
 
+		puts ""
 
-		# Insert the lyric to DB
-		if $db == true
-				artistName = client.escape("#{currentSong["artistName"]}")
-				trackName = client.escape("#{currentSong["trackName"]}")
-				albumName = client.escape("#{currentSong["albumName"]}")
-				lyricText = client.escape("#{lyricText}")
-				client.query("INSERT INTO songs (slot_id, length, artistName, trackName, albumName, lyric) VALUES ('#{currentSong["slot_id"]}', '#{currentSong["length"]}', '#{artistName}', '#{trackName}', '#{albumName}', '#{lyricText}')")
-		end
-
+		# Insert to DB
+		artistName = client.escape("#{currentSong["artistName"]}")
+		trackName = client.escape("#{currentSong["trackName"]}")
+		albumName = client.escape("#{currentSong["albumName"]}")
+		lyricText = client.escape("#{lyricText}")
+		#client.query("INSERT INTO songs (slot_id, length, artistName, trackName, albumName, lyric) VALUES ('#{currentSong["slot_id"]}', '#{currentSong["length"]}', '#{currentSong["artistName"]}', '#{currentSong["trackName"]}', '#{currentSong["albumName"]}', \"#{lyricText}\")")
+		client.query("INSERT INTO songs (slot_id, length, artistName, trackName, albumName, lyric) VALUES ('#{currentSong["slot_id"]}', '#{currentSong["length"]}', '#{artistName}', '#{trackName}', '#{albumName}', '#{lyricText}')")
+		#client.query("INSERT INTO songs (artistName) VALUES ('#{currentSong["artistName"]}')")
+		#puts currentSong["slot_id"], currentSong["length"], currentSong["artistName"], currentSong["trackName"], currentSong["albumName"], lyricText
 		sleep timeUntilNextSong
 
 	else

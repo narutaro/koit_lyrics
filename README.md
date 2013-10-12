@@ -1,9 +1,9 @@
 koit_lyrics
 ===========
 
-Display the lyrics of KOIT radio
+### Display the lyrics of KOIT radio
 
-This small ruby script shows lyrics which is on-air on the radio station `KOIT`, SF - My favorit station.
+This small ruby script shows lyrics which is on-air on the radio station *KOIT 96.5* - My favorit station.
 
 
 ```
